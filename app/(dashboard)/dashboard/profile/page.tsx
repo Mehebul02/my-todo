@@ -1,8 +1,9 @@
+import AccountForm from "@/components/dashboard/profile/account-form";
 
 const page = () => {
     return (
-        <div>
-            <h1 className='text-3xl text-red-800 text-center'>profile Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore animi unde repellat, distinctio hic ea. Illum, magni dicta non, blanditiis magnam illo expedita perferendis similique maiores mollitia quaerat, doloremque excepturi a natus odio laboriosam. Praesentium ad, amet fugit inventore totam dolores velit veritatis voluptatibus commodi sequi qui, debitis aliquid. Cumque deleniti nihil, autem labore animi laboriosam eum earum voluptatem illum sequi exercitationem dolores doloribus unde eligendi dolore harum asperiores veritatis neque libero porro aperiam? Necessitatibus tempore dolor natus quis non eius ipsam impedit temporibus facilis nisi perferendis, accusantium facere rem cumque! Sit cum excepturi quasi esse in ipsam explicabo, cupiditate officia, illo qui laudantium suscipit commodi beatae sint nostrum perferendis dignissimos blanditiis, minus eum. Ab ipsa excepturi, optio quos delectus porro accusamus commodi! Distinctio assumenda beatae facere. Consequatur nostrum, repellendus quisquam ad, a recusandae vitae iure alias id similique fugiat, distinctio dolores. Culpa unde, nulla vel iure nostrum odit possimus, saepe eum, quaerat suscipit quas necessitatibus quidem laborum consequatur ea molestiae vitae in obcaecati! Inventore voluptatibus dolores enim, harum eveniet corrupti. Esse, quibusdam magni? Quia quam consequuntur expedita animi tempore, aperiam ea, sapiente numquam dignissimos quod consectetur aut aliquid rem at blanditiis eligendi. Eius harum esse facilis sed autem vitae maxime similique culpa cupiditate quos est sequi nemo, blanditiis enim et quibusdam, distinctio dignissimos sunt ipsa cum. Magni eaque ratione suscipit quidem similique?</h1>
+        <div >
+            <AccountForm />
         </div>
     );
 };

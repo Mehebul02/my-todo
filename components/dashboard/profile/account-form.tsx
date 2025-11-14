@@ -41,11 +41,12 @@ export default function AccountForm() {
   }
 
   return (
-    <Card className="max-w-2xl">
-      <CardHeader>
+    <div className="w-full flex justify-center">
+      <div className="max-w-7xl mx-auto w-full bg-white">
+        <CardHeader>
         <CardTitle>Account Information</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <div className="space-y-6">
         {/* Profile Picture Section */}
         <div className="flex items-center gap-4">
           <Avatar className="w-24 h-24 border-2 border-border">
@@ -143,16 +144,7 @@ export default function AccountForm() {
           />
         </div>
 
-        {/* Avatar Selection */}
-        <div className="flex gap-4 pt-4">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-pink-500 flex items-center justify-center text-white font-bold cursor-pointer hover:shadow-lg transition-shadow">
-            Y
-          </div>
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center text-white font-bold cursor-pointer hover:shadow-lg transition-shadow">
-            M
-          </div>
-        </div>
-
+     
         {/* Action Buttons */}
         <div className="flex gap-4 pt-6">
           <Button
@@ -169,7 +161,8 @@ export default function AccountForm() {
             Cancel
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+      </div>
+    </div>
   )
 }
