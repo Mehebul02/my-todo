@@ -39,7 +39,7 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit }: AddTaskModal
             onClick={onClose}
             className="text-slate-500 hover:text-slate-700 transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 cursor-pointer" />
           </button>
         </div>
 

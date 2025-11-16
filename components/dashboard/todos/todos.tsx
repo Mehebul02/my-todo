@@ -12,6 +12,8 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import AddTaskModal from './add-task-modal'
+import { TaskCard } from './task-card'
+import { TaskCardSkeletonGroup } from './task-card-skeleto'
 
 interface Todo {
     id: string
@@ -19,12 +21,39 @@ interface Todo {
     createdAt: Date
     daysUntilDeadline?: number
 }
+const tasksData: Todo[] = [
+    {
+        id: "1",
+        title: "Backend Infrastructure",
+        date: "2025-04-15",
+        priority: "High",
+        description: "Upgrading backend infrastructure for better performance",
+        createdAt: new Date(),
+    },
+    {
+        id: "2",
+        title: "Mobile App Redesign",
+        date: "2025-03-25",
+        priority: "Medium",
+        description: "Redesigning the mobile app interface for better user experience",
+        createdAt: new Date(),
+    },
+    {
+        id: "3",
+        title: "Analytics Dashboard",
+        date: "2025-03-30",
+        priority: "Low",
+        description: "Creating a new analytics dashboard for clients",
+        createdAt: new Date(),
+    },
+]
 
 export default function TodosPage() {
     const [todos, setTodos] = useState<Todo[]>([])
     const [searchQuery, setSearchQuery] = useState('')
     const [filterBy, setFilterBy] = useState<string | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const handleAddTask = () => {
         setIsModalOpen(true)
     }
@@ -122,7 +151,7 @@ export default function TodosPage() {
 
                     <Button
                         onClick={handleAddTask}
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-6 rounded-lg flex items-center gap-2 transition-colors"
+                        className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white font-semibold py-2.5 px-6 rounded-lg flex items-center gap-2 transition-colors"
                     >
                         <Plus className="w-5 h-5" />
                         New Task
@@ -130,7 +159,7 @@ export default function TodosPage() {
                 </div>
 
                 {/* Content Area */}
-                {filteredTodos.length === 0 ? (
+                {tasksData.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 bg-white rounded-lg shadow-sm">
 
                         <div className="mb-6 relative w-48 h-40">
@@ -168,18 +197,12 @@ export default function TodosPage() {
                         </p>
                     </div>
                 ) : (
-                    <div className="space-y-3 bg-white">
-                        {filteredTodos.map((todo) => (
-                            <div
-                                key={todo.id}
-                                className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors group"
-                            >
-                                <CheckCircle2 className="w-6 h-6 text-slate-300 group-hover:text-blue-500 transition-colors cursor-pointer flex-shrink-0" />
-                                <div className="flex-1">
-                                    <p className="font-medium text-slate-900">{todo.title}</p>
-                                </div>
-                            </div>
-                        ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {isLoading ? (
+                            <TaskCardSkeletonGroup count={6} />
+                        ) : (
+                            tasksData?.map((todo) => <TaskCard key={todo.id} task={todo} />)
+                        )}
                     </div>
                 )}
             </div>
