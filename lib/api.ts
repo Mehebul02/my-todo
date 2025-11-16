@@ -34,19 +34,21 @@ export const signup = (data: { first_name: string; last_name: string; email: str
 
 export const login = (data: { email: string; password: string }) =>
   api<{ access: string; refresh: string; user: any }>("/auth/login/", { method: "POST", body: data });
+
 export const getMe = (access: string) =>
   api<{ user: any }>("/users/me/", { method: "GET", access });
 export const profileUpdate = (access: string, formData: FormData) =>
   fetch(`${BASE}/users/me/`, {
     method: "PATCH",
     headers: {
-      Authorization: `Bearer ${access}`, 
+      Authorization: `Bearer ${access}`,
     },
     body: formData,
   }).then(async res => {
     if (!res.ok) throw new Error(await res.text());
     return res.json();
   });
+  
 // Todos endpoints 
 export const getTodos = (access: string) => api<Todo[]>("/api/v1/todos", { access });
 export const createTodo = (access: string, body: { title: string; description?: string }) =>
