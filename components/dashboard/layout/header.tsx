@@ -11,7 +11,7 @@ export default function Header() {
     date: "07/11/2025"
   };
   return (
-    <header className="text-center  bg-white border-b border-border px-8 py-6 flex justify-between items-center shadow-sm">
+    <header className="text-center  bg-white border-b border-border p-4 lg:px-8 py-6 flex justify-between items-center shadow-sm">
       <div className="text-2xl font-bold text-foreground ml-62">
         <Image src={logo ||""} alt="Logo" width={150} height={150} />
         </div>

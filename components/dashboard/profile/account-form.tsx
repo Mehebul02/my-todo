@@ -632,7 +632,7 @@ const handleSave = async () => {
   if (loading) {
     return (
       <div className="w-full flex justify-center items-start py-10">
-        <div className="max-w-3xl w-full bg-white shadow rounded-lg p-6">
+        <div className="max-w-4xl w-full bg-white shadow rounded-lg p-6">
           <CardHeader>
             <CardTitle>Loading Account Info...</CardTitle>
           </CardHeader>
@@ -657,7 +657,7 @@ const handleSave = async () => {
 
   return (
     <div className="w-full flex justify-center items-start py-10">
-      <div className="bg-white max-w-3xl w-full shadow rounded-lg p-6">
+      <div className="bg-white max-w-5xl w-full shadow rounded-lg p-6">
         <CardHeader>
           <CardTitle>Account Information</CardTitle>
         </CardHeader>
