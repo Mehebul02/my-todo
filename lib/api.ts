@@ -30,10 +30,12 @@ async function api<T>(path: string, { access, method = "GET", body }: ApiOptions
 
 // Auth endpoints
 export const signup = (data: { first_name: string; last_name: string; email: string; password: string }) =>
-  api<{ access: string; refresh: string; user: any }>("/api/users/signup/", { method: "POST", body: data });
+  api<{ access: string; refresh: string; user: any }>("/users/signup/", { method: "POST", body: data });
 
 export const login = (data: { email: string; password: string }) =>
-  api<{ access: string; refresh: string; user: any }>("/api/auth/login/", { method: "POST", body: data });
+  api<{ access: string; refresh: string; user: any }>("/auth/login/", { method: "POST", body: data });
+export const getMe = (access: string) =>
+  api<{ user: any }>("/users/me/", { method: "GET", access });
 
 // Todos endpoints 
 export const getTodos = (access: string) => api<Todo[]>("/api/v1/todos", { access });
