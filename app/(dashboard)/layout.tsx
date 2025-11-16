@@ -1,17 +1,23 @@
 "use client"
 import Header from "@/components/dashboard/layout/header"
 import { AppSidebar } from "@/components/dashboard/layout/sidebar"
-import { SidebarProvider, } from "@/components/ui/sidebar"
+import { SidebarProvider } from "@/components/ui/sidebar"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-[#EEF7FF]">
+    <div className="bg-[#EEF7FF] w-full min-h-screen">
       <Header />
+
       <SidebarProvider>
-        <AppSidebar />
-        <main>
-          {children}
-        </main>
+        <div className="flex w-full">  
+          <AppSidebar />
+          <main className="flex-1 flex justify-center items-start ">
+            <div className="w-full ">
+              {children}
+            </div>
+          </main>
+
+        </div>
       </SidebarProvider>
     </div>
   )

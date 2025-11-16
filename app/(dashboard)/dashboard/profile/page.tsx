@@ -2,9 +2,10 @@ import AccountForm from "@/components/dashboard/profile/account-form";
 
 const page = () => {
     return (
-        <div >
-            <AccountForm />
-        </div>
+      <main className="flex-1 flex justify-center items-start">
+  <AccountForm />
+</main>
+
     );
 };
 
