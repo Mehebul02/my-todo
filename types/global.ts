@@ -4,6 +4,7 @@ export type Todo = {
   description?: string;
   completed: boolean;
   order?: number; 
+  date?: string;
   createdAt?: string;
   updatedAt?: string;
 };

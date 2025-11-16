@@ -8,10 +8,10 @@ import { Trash2, Calendar, X } from 'lucide-react'
 interface AddTaskModalProps {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (task: { title: string; date: string; priority: string; description: string }) => void
+  // onSubmit: (task: { title: string; date: string; priority: string; description: string }) => void
 }
 
-export default function AddTaskModal({ isOpen, onClose, onSubmit }: AddTaskModalProps) {
+export default function AddTaskModal({ isOpen, onClose,  }: AddTaskModalProps) {
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
   const [priority, setPriority] = useState('moderate')
@@ -19,7 +19,7 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit }: AddTaskModal
 
   const handleSubmit = () => {
     if (title.trim()) {
-      onSubmit({ title, date, priority, description })
+      // onSubmit({ title, date, priority, description })
       setTitle('')
       setDate('')
       setPriority('moderate')

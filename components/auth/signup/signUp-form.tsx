@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import Link from "next/link"
-import { Checkbox } from "@/components/ui/checkbox"
 import { signUp } from "@/app/assets"
 import { signup } from "@/lib/api"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-
+import { Eye, EyeOff } from "lucide-react"
 
 export default function SignUpForm() {
   const [firstName, setFirstName] = useState("")
@@ -19,10 +17,10 @@ export default function SignUpForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-const Api = process.env.NEXT_PUBLIC_API_BASE_URL;
-
+const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+const router = useRouter()
   // Validation states
   const [errors, setErrors] = useState({
     firstName: "",
@@ -32,7 +30,6 @@ const Api = process.env.NEXT_PUBLIC_API_BASE_URL;
     confirmPassword: "",
     submit: "",
   })
-const BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const validateForm = () => {
     const newErrors = {
@@ -46,48 +43,68 @@ const BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
     setErrors(newErrors)
     return Object.values(newErrors).every((err) => err === "")
   }
-  const router = useRouter()
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+  
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     if (!validateForm()) return;
 
-    setIsLoading(true);
-    setErrors(prev => ({ ...prev, submit: "" })); // Clear previous errors
+//     setIsLoading(true);
+//     setErrors(prev => ({ ...prev, submit: "" })); // Clear previous errors
 
-    try {
-      const response = await fetch(
-        "https://todo-app.pioneeralpha.com/api/users/signup/",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            first_name: firstName,
-            last_name: lastName,
-            email,
-            password,
-          }),
-        }
-      );
+//    try {
+//   const response = await fetch(`${BASE}/api/users/signup/`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       first_name: firstName,
+//       last_name: lastName,
+//       email,
+//       password,
+//     }),
+//   });
 
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || `Signup failed with status ${response.status}`);
-      }
-      const data = await response.json();
-      console.log("Signup Success:", data);
-      // Show success message or redirect
-      toast.success("Signup successful!");
-      router.push("/auth/signin");
-      
+//   if (!response.ok) {
+//     const text = await response.text();
+//     throw new Error(text || `Signup failed with status ${response.status}`);
+//   }
+//   const data = await response.json();
+//   console.log("Signup Success:", data);
+//   toast.success("Signup successful!");
+//   router.push("/auth/signin");
 
-    } catch (err: any) {
-      console.error("Signup Failed:", err.message);
-      setErrors((prev) => ({ ...prev, submit: err.message }));
-    } finally {
-      setIsLoading(false);
-    }
-  };
+// } catch (err: any) {
+//   console.error("Signup Failed:", err.message);
+//   setErrors((prev) => ({ ...prev, submit: err.message }));
+// } finally {
+//   setIsLoading(false);
+// }
+//   };
 
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!validateForm()) return;
+  setIsLoading(true);
+  try {
+    const res = await signup({
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      password,
+    });
+
+    toast.success("Signup successful!");
+    router.push("/auth/signin");
+  } catch (error: any) {
+    toast.error("Signup failed, please try again");
+    console.log("Error while signing up:", error);
+
+    setErrors((prev) => ({
+      ...prev,
+      email: error?.message || "Signup failed, please try again",
+    }));
+  }
+};
 
   return (
     <div className="min-h-screen max-w-[1680px] mx-auto">
@@ -159,42 +176,58 @@ const BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
                 {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
               </div>
 
-              {/* Password */}
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={`mt-1 block w-full ${errors.password ? 'border-red-500' : ''}`}
-                  placeholder="••••••••"
-                  required
-                />
-                {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
-                {password && password.length < 4 && (
-                  <p className="mt-1 text-xs text-yellow-600">4 characters minimum.</p>
-                )}
-              </div>
+                 <div className="space-y-4">
+      {/* Password */}
+      <div className="relative">
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          Password
+        </label>
+        <Input
+          id="password"
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className={`mt-1 block w-full pr-10 ${errors.password ? 'border-red-500' : ''}`}
+          placeholder="••••••••"
+          required
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute inset-y-0 right-0 pr-3 mt-6 flex items-center text-gray-500"
+        >
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+        {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
+        {password && password.length < 4 && (
+          <p className="mt-1 text-xs text-yellow-600">4 characters minimum.</p>
+        )}
+      </div>
 
-              {/* Confirm Password */}
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Confirm Password
-                </label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`mt-1 block w-full ${errors.confirmPassword ? 'border-red-500' : ''}`}
-                  placeholder="••••••••"
-                  required
-                />
-                {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
-              </div>
+      {/* Confirm Password */}
+      <div className="relative">
+        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+          Confirm Password
+        </label>
+        <Input
+          id="confirmPassword"
+          type={showConfirm ? "text" : "password"}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className={`mt-1 block w-full pr-10 ${errors.confirmPassword ? 'border-red-500' : ''}`}
+          placeholder="••••••••"
+          required
+        />
+        <button
+          type="button"
+          onClick={() => setShowConfirm(!showConfirm)}
+          className="absolute inset-y-0 right-0 pr-3 mt-6 flex items-center text-gray-500"
+        >
+          {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+        {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
+      </div>
+    </div>
 
               {/* Submit Button */}
               <Button

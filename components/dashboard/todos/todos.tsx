@@ -20,6 +20,9 @@ interface Todo {
     title: string
     createdAt: Date
     daysUntilDeadline?: number
+    date: string
+    priority: "Low" | "Medium" | "High"
+    description: string
 }
 const tasksData: Todo[] = [
     {
@@ -65,7 +68,7 @@ export default function TodosPage() {
     const handleSearch = (value: string) => {
         setSearchQuery(value)
     }
-    const handleSubmitTask = (task: { title: string; date: string; priority: string; description: string }) => {
+    const handleSubmitTask = (task: { title: string; date: string; priority: Todo['priority']; description: string }) => {
         const newTodo: Todo = {
             id: Date.now().toString(),
             title: task.title,
@@ -206,7 +209,7 @@ export default function TodosPage() {
                     </div>
                 )}
             </div>
-            <AddTaskModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmitTask} />
+            <AddTaskModal isOpen={isModalOpen} onClose={handleCloseModal}  />
 
         </div>
     )
