@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState } from 'react';
 import { Pencil, Trash2, GripVertical } from 'lucide-react';
 import EditTaskModal from './EditModal';
-
-// ✅ Fixed interface
+import { deleteTodo } from '@/lib/api';
+import Cookies from "js-cookie";
+import { toast } from 'sonner';
 interface Todo {
   id: string;
   title: string;
@@ -14,8 +16,11 @@ interface Todo {
   is_completed: boolean;
 }
 
-export const TaskCard = ({ task }: { task: Todo }) => {
+export const TaskCard = ({ task, handleRemoveLocal }: any) => {
+   const access: any = Cookies.get("access_token")
   const [isOpenModal, setIsOpenModal] = useState(false);
+  
+
   const getPriorityStyles = (priority: string) => {
     switch (priority) {
       case 'extreme':
@@ -29,7 +34,7 @@ export const TaskCard = ({ task }: { task: Todo }) => {
     }
   };
 
-  // ✅ No need for getPriorityLabel — API values match UI
+  
   const formatDate = (dateString: string) => {
     if (!dateString) return '—';
     const date = new Date(dateString);
@@ -41,6 +46,16 @@ export const TaskCard = ({ task }: { task: Todo }) => {
     });
   };
 
+const handleDelete = async (id: any) => {
+  try {
+    await deleteTodo(access, id);
+    toast.success("Deleted successfully!");
+    handleRemoveLocal(id);
+  } catch (error) {
+    toast.error("Something went wrong!");
+    console.error(error);
+  }
+};
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-200">
       {/* Header */}
@@ -48,7 +63,7 @@ export const TaskCard = ({ task }: { task: Todo }) => {
         <h3 className="text-xl font-semibold text-gray-900">{task.title}</h3>
         <div className="flex items-center gap-2">
           <span className={`px-3 py-1 rounded-md text-sm font-medium border capitalize ${getPriorityStyles(task.priority)}`}>
-            {task.priority} {/* ✅ direct use */}
+            {task.priority} 
           </span>
           <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
             <GripVertical className="w-5 h-5 text-gray-400" />
@@ -70,7 +85,7 @@ export const TaskCard = ({ task }: { task: Todo }) => {
           <button onClick={() => setIsOpenModal(true)} className="p-2 hover:bg-blue-50 rounded-lg transition-colors group cursor-pointer">
             <Pencil className="w-4 h-4  text-gray-400 group-hover:text-blue-600" />
           </button>
-          <button className="p-2 hover:bg-red-50 rounded-lg transition-colors group">
+          <button onClick={()=> handleDelete(task.id)} className="p-2 hover:bg-red-50 rounded-lg cursor-pointer transition-colors group">
             <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-600" />
           </button>
         </div>

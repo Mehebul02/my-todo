@@ -34,6 +34,9 @@ export default function TodosPage() {
     const [isLoading, setIsLoading] = useState(false)
     const [todos, setTodos] = useState<Todo[]>([])
     const [error, setError] = useState<string | null>(null)
+    const handleRemoveLocal = (id: string) => {
+  setTodos(prev => prev.filter(todo => todo.id !== id));
+};
  const access = Cookies.get("access_token")
     // Fetch todos whenever search or filter changes
     useEffect(() => {
@@ -196,7 +199,7 @@ export default function TodosPage() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                         {todos.map((todo) => (
-                            <TaskCard key={todo.id} task={todo} />
+                            <TaskCard key={todo.id} task={todo}  handleRemoveLocal={handleRemoveLocal}/>
                         ))}
                     </div>
                 )}
@@ -206,6 +209,7 @@ export default function TodosPage() {
             <AddTaskModal
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
+                onAddTask={handleAddSuccess}
               
             />
         </div>

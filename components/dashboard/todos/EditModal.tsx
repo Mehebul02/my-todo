@@ -85,7 +85,7 @@ export default function EditTaskModal({
       <div className="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-lg">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-xl font-semibold text-slate-900">Edit Task</h2> {/* ✅ Changed */}
+          <h2 className="text-xl font-semibold text-slate-900">Edit Task</h2> 
           <button
             onClick={onClose}
             className="text-slate-500 hover:text-slate-700 transition-colors"

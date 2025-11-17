@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useState } from 'react'
@@ -8,14 +9,9 @@ import { createTodo } from '@/lib/api'
 
 import Cookies from "js-cookie";
 import { toast } from 'sonner'
-interface AddTaskModalProps {
-  isOpen: boolean;
-  onClose: () => void;
 
 
-}
-
-export default function AddTaskModal({ isOpen, onClose, }: AddTaskModalProps) {
+export default function AddTaskModal({ isOpen, onClose, onAddTask}: any) {
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
   const [priority, setPriority] = useState<'extreme' | 'moderate' | 'low'>('moderate')
@@ -51,6 +47,7 @@ export default function AddTaskModal({ isOpen, onClose, }: AddTaskModalProps) {
         priority,
         todo_date: date, 
       })
+      onAddTask(newTodo)
       toast.success("Todo created successfully!")
      
       setTitle('')

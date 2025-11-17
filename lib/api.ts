@@ -7,10 +7,12 @@ type ApiOptions = {
   method?: string;
   body?: any;
   headers?: any;
-  access?: string | null; // optional now
+  access?: string | null; 
 };
-
-async function api<T>(path: string, { access, method = "GET", body }: ApiOptions = {}): Promise<T> {
+async function api<T>(
+  path: string,
+  { access, method = "GET", body }: ApiOptions = {}
+): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     method,
     headers: {
@@ -22,10 +24,16 @@ async function api<T>(path: string, { access, method = "GET", body }: ApiOptions
   });
 
   if (!res.ok) {
-    const text = await res.text();
+    const text = await res.text(); 
     throw new Error(text || res.statusText);
   }
-  return res.json();
+  const text = await res.text();
+
+  if (!text) {
+    return {} as T;
+  }
+
+  return JSON.parse(text);
 }
 
 // Auth endpoints
@@ -78,10 +86,9 @@ export const createTodo = (access: string, body: { title: string; description?: 
 export const updateTodo = (access: string, id: string, body: Partial<Todo>) =>
   api<Todo>(`/todos/${id}/`, { access, method: "PATCH", body });
 export const deleteTodo = (access: string, id: string) =>
-  api<{ success: boolean }>(`/api/v1/todos/${id}`, { access, method: "DELETE" });
-
-// Reorder
-export const reorderTodos = (access: string, orderedIds: string[]) =>
-  api("/api/v1/todos/reorder", { access, method: "POST", body: { orderedIds } });
+  api<Todo>(`/todos/${id}/`, {
+    access,
+    method: "DELETE",
+  });
 
 
