@@ -4,26 +4,68 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Trash2, Calendar, X } from 'lucide-react'
+import { createTodo } from '@/lib/api'
 
+import Cookies from "js-cookie";
+import { toast } from 'sonner'
 interface AddTaskModalProps {
-  isOpen: boolean
-  onClose: () => void
-  // onSubmit: (task: { title: string; date: string; priority: string; description: string }) => void
+  isOpen: boolean;
+  onClose: () => void;
+
+
 }
 
-export default function AddTaskModal({ isOpen, onClose,  }: AddTaskModalProps) {
+export default function AddTaskModal({ isOpen, onClose, }: AddTaskModalProps) {
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
-  const [priority, setPriority] = useState('moderate')
+  const [priority, setPriority] = useState<'extreme' | 'moderate' | 'low'>('moderate')
   const [description, setDescription] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const access = Cookies.get("access_token")
+  const handleSubmit = async () => {
+    if (!title.trim()) {
+      setError("Title is required")
+      return
+    }
 
-  const handleSubmit = () => {
-    if (title.trim()) {
-      // onSubmit({ title, date, priority, description })
+    if (!date) {
+      setError("Date is required")
+      return
+    }
+
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      // Get access token from localStorage or context (adjust as needed)
+
+      if (!access) {
+        throw new Error("No access token found")
+      }
+
+      // Call the API with the correct payload
+      const newTodo = await createTodo(access, {
+        title,
+        description: description || undefined,
+        priority,
+        todo_date: date, 
+      })
+      toast.success("Todo created successfully!")
+     
       setTitle('')
       setDate('')
       setPriority('moderate')
       setDescription('')
+      onClose()
+
+
+
+    } catch (err) {
+      console.error("Failed to create todo:", err)
+      setError(err instanceof Error ? err.message : "Something went wrong")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -78,7 +120,7 @@ export default function AddTaskModal({ isOpen, onClose,  }: AddTaskModalProps) {
                 name="priority"
                 value="extreme"
                 checked={priority === 'extreme'}
-                onChange={(e) => setPriority(e.target.value)}
+                onChange={(e) => setPriority(e.target.value as 'extreme' | 'moderate' | 'low')}
                 className="w-4 h-4 cursor-pointer accent-red-500"
               />
               <span className="flex items-center gap-2 text-sm text-slate-700">
@@ -92,7 +134,7 @@ export default function AddTaskModal({ isOpen, onClose,  }: AddTaskModalProps) {
                 name="priority"
                 value="moderate"
                 checked={priority === 'moderate'}
-                onChange={(e) => setPriority(e.target.value)}
+                onChange={(e) => setPriority(e.target.value as 'extreme' | 'moderate' | 'low')}
                 className="w-4 h-4 cursor-pointer accent-green-500"
               />
               <span className="flex items-center gap-2 text-sm text-slate-700">
@@ -106,7 +148,7 @@ export default function AddTaskModal({ isOpen, onClose,  }: AddTaskModalProps) {
                 name="priority"
                 value="low"
                 checked={priority === 'low'}
-                onChange={(e) => setPriority(e.target.value)}
+                onChange={(e) => setPriority(e.target.value as 'extreme' | 'moderate' | 'low')}
                 className="w-4 h-4 cursor-pointer accent-yellow-500"
               />
               <span className="flex items-center gap-2 text-sm text-slate-700">
@@ -128,13 +170,22 @@ export default function AddTaskModal({ isOpen, onClose,  }: AddTaskModalProps) {
           />
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div className="flex items-center justify-between">
           <Button
             onClick={handleSubmit}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+            disabled={isLoading}
+            className={`bg-blue-500 hover:bg-blue-600 cursor-pointer text-white font-semibold py-2 px-6 rounded-lg transition-colors ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
           >
-            Done
+            {isLoading ? 'Saving...' : 'Done'}
           </Button>
           <button
             onClick={() => {

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,49 +15,63 @@ import {
 import AddTaskModal from './add-task-modal'
 import { TaskCard } from './task-card'
 import { TaskCardSkeletonGroup } from './task-card-skeleto'
-
+import { getTodos } from '@/lib/api' 
+import Cookies from "js-cookie";
 interface Todo {
-    id: string
-    title: string
-    createdAt: Date
-    daysUntilDeadline?: number
-    date: string
-    priority: "Low" | "Medium" | "High"
-    description: string
+   id: string;
+  title: string;
+  date: string;
+  priority: 'Low' | 'Medium' | 'High';
+  description: string;
+  createdAt: Date;
 }
-const tasksData: Todo[] = [
-    {
-        id: "1",
-        title: "Backend Infrastructure",
-        date: "2025-04-15",
-        priority: "High",
-        description: "Upgrading backend infrastructure for better performance",
-        createdAt: new Date(),
-    },
-    {
-        id: "2",
-        title: "Mobile App Redesign",
-        date: "2025-03-25",
-        priority: "Medium",
-        description: "Redesigning the mobile app interface for better user experience",
-        createdAt: new Date(),
-    },
-    {
-        id: "3",
-        title: "Analytics Dashboard",
-        date: "2025-03-30",
-        priority: "Low",
-        description: "Creating a new analytics dashboard for clients",
-        createdAt: new Date(),
-    },
-]
 
 export default function TodosPage() {
-    const [todos, setTodos] = useState<Todo[]>([])
     const [searchQuery, setSearchQuery] = useState('')
     const [filterBy, setFilterBy] = useState<string | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [todos, setTodos] = useState<Todo[]>([])
+    const [error, setError] = useState<string | null>(null)
+ const access = Cookies.get("access_token")
+    // Fetch todos whenever search or filter changes
+    useEffect(() => {
+        const fetchTodos = async () => {
+            setIsLoading(true)
+            setError(null)
+
+            try {
+          
+             
+                if (!access) throw new Error("No access token")
+
+                // Build filters
+                const params: any = {}
+                if (searchQuery.trim()) params.search = searchQuery.trim()
+                if (filterBy === 'today') params.todo_date = new Date().toISOString().split('T')[0]
+                if (filterBy === '5days') {
+                    const date = new Date()
+                    date.setDate(date.getDate() + 5)
+                    params.todo_date = date.toISOString().split('T')[0]
+                }
+                // Add more filters as needed...
+
+                const data = await getTodos(access, params)
+
+                // Extract results from paginated response
+                setTodos((data as any).results)
+
+            } catch (err) {
+                console.error("Failed to fetch todos:", err)
+                setError(err instanceof Error ? err.message : "Failed to load tasks")
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchTodos()
+    }, [searchQuery, filterBy])
+
     const handleAddTask = () => {
         setIsModalOpen(true)
     }
@@ -68,41 +83,15 @@ export default function TodosPage() {
     const handleSearch = (value: string) => {
         setSearchQuery(value)
     }
-    const handleSubmitTask = (task: { title: string; date: string; priority: Todo['priority']; description: string }) => {
-        const newTodo: Todo = {
-            id: Date.now().toString(),
-            title: task.title,
-            date: task.date,
-            priority: task.priority,
-            description: task.description,
-            createdAt: new Date(),
-        }
-        setTodos([...todos, newTodo])
-        setIsModalOpen(false)
+
+    const handleAddSuccess = (newTodo: Todo) => {
+        // Add new todo to list immediately
+        setTodos(prev => [newTodo, ...prev])
     }
-    const filteredTodos = todos.filter(todo => {
-        const matchesSearch = todo.title.toLowerCase().includes(searchQuery.toLowerCase())
-
-        if (!filterBy) return matchesSearch
-
-        switch (filterBy) {
-            case 'today':
-                const today = new Date()
-                return matchesSearch && todo.createdAt.toDateString() === today.toDateString()
-            case '5days':
-                return matchesSearch && todo.daysUntilDeadline !== undefined && todo.daysUntilDeadline <= 5
-            case '10days':
-                return matchesSearch && todo.daysUntilDeadline !== undefined && todo.daysUntilDeadline <= 10
-            case '30days':
-                return matchesSearch && todo.daysUntilDeadline !== undefined && todo.daysUntilDeadline <= 30
-            default:
-                return matchesSearch
-        }
-    })
 
     return (
         <div className="w-full flex justify-center items-start py-4 min-h-screen">
-            <div className="  w-full  p-8">
+            <div className="w-full p-8">
                 {/* Header */}
                 <CardHeader className="mb-6 p-0">
                     <CardTitle className="text-4xl font-bold text-[#0D224A] border-b-2 border-[#5272FF] w-16">Todos</CardTitle>
@@ -161,15 +150,21 @@ export default function TodosPage() {
                     </Button>
                 </div>
 
-                {/* Content Area */}
-                {tasksData.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-20 bg-white rounded-lg shadow-sm">
+                {/* Error Message */}
+                {error && (
+                    <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+                        {error}
+                    </div>
+                )}
 
+                {/* Content Area */}
+                {isLoading ? (
+                    <TaskCardSkeletonGroup count={6} />
+                ) : todos.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-20 bg-white rounded-lg shadow-sm">
                         <div className="mb-6 relative w-48 h-40">
                             <svg viewBox="0 0 200 160" className="w-full h-full">
-                                {/* Task cards illustration */}
                                 <g>
-                                    {/* Back card */}
                                     <rect x="30" y="20" width="140" height="100" rx="8" fill="none" stroke="#d1d5db" strokeWidth="2" opacity="0.5" />
                                     <rect x="40" y="35" width="30" height="20" rx="3" fill="#d1d5db" opacity="0.5" />
                                     <line x1="75" y1="38" x2="155" y2="38" stroke="#d1d5db" strokeWidth="2" opacity="0.5" />
@@ -178,7 +173,6 @@ export default function TodosPage() {
                                     <line x1="40" y1="70" x2="155" y2="70" stroke="#d1d5db" strokeWidth="1.5" opacity="0.3" />
                                     <line x1="40" y1="80" x2="130" y2="80" stroke="#d1d5db" strokeWidth="1.5" opacity="0.3" />
 
-                                    {/* Front card */}
                                     <rect x="55" y="45" width="140" height="100" rx="8" fill="white" stroke="#d1d5db" strokeWidth="2" />
                                     <rect x="65" y="60" width="35" height="25" rx="3" fill="#3b82f6" />
                                     <line x1="105" y1="63" x2="180" y2="63" stroke="#d1d5db" strokeWidth="2" />
@@ -187,7 +181,6 @@ export default function TodosPage() {
                                     <line x1="65" y1="100" x2="180" y2="100" stroke="#d1d5db" strokeWidth="1.5" opacity="0.5" />
                                     <line x1="65" y1="112" x2="160" y2="112" stroke="#d1d5db" strokeWidth="1.5" opacity="0.5" />
 
-                                    {/* Plus icon */}
                                     <circle cx="160" cy="135" r="18" fill="#3b82f6" />
                                     <line x1="160" y1="127" x2="160" y2="143" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
                                     <line x1="152" y1="135" x2="168" y2="135" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
@@ -201,16 +194,19 @@ export default function TodosPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {isLoading ? (
-                            <TaskCardSkeletonGroup count={6} />
-                        ) : (
-                            tasksData?.map((todo) => <TaskCard key={todo.id} task={todo} />)
-                        )}
+                        {todos.map((todo) => (
+                            <TaskCard key={todo.id} task={todo} />
+                        ))}
                     </div>
                 )}
             </div>
-            <AddTaskModal isOpen={isModalOpen} onClose={handleCloseModal}  />
 
+            {/* Modal */}
+            <AddTaskModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+              
+            />
         </div>
     )
 }

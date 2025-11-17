@@ -50,9 +50,31 @@ export const profileUpdate = (access: string, formData: FormData) =>
   });
   
 // Todos endpoints 
-export const getTodos = (access: string) => api<Todo[]>("/api/v1/todos", { access });
-export const createTodo = (access: string, body: { title: string; description?: string }) =>
-  api<Todo>("/api/v1/todos", { access, method: "POST", body });
+export const getTodos = (
+  access: string,
+  params?: {
+    search?: string;
+    priority?: string;
+    todo_date?: string;
+    is_completed?: boolean;
+  }
+) => {
+  // Build query string manually
+  const queryParams = new URLSearchParams();
+  if (params?.search) queryParams.append('search', params.search);
+  if (params?.priority) queryParams.append('priority', params.priority);
+  if (params?.todo_date) queryParams.append('todo_date', params.todo_date);
+  if (params?.is_completed !== undefined) {
+    queryParams.append('is_completed', String(params.is_completed));
+  }
+
+  const queryString = queryParams.toString();
+  const path = `/todos/${queryString ? `?${queryString}` : ''}`;
+
+  return api<Todo[]>(path, { access });
+};
+export const createTodo = (access: string, body: { title: string; description?: string, priority: "extreme" | "moderate" | "low", todo_date: string }) =>
+  api<Todo>("/todos/", { access, method: "POST", body });
 export const updateTodo = (access: string, id: string, body: Partial<Todo>) =>
   api<Todo>(`/api/v1/todos/${id}`, { access, method: "PUT", body });
 export const deleteTodo = (access: string, id: string) =>

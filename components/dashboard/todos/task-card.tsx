@@ -13,14 +13,15 @@ interface Todo {
 
 
 
+
 export const TaskCard = ({ task }: { task: Todo }) => {
   const getPriorityStyles = (priority: string) => {
     switch (priority) {
-      case 'High':
+      case 'extreme':
         return 'bg-red-50 text-red-600 border-red-100';
-      case 'Medium':
+      case 'moderate':
         return 'bg-green-50 text-green-600 border-green-100';
-      case 'Low':
+      case 'low':
         return 'bg-yellow-50 text-yellow-600 border-yellow-100';
       default:
         return 'bg-gray-50 text-gray-600 border-gray-100';
@@ -28,8 +29,8 @@ export const TaskCard = ({ task }: { task: Todo }) => {
   };
 
   const getPriorityLabel = (priority: string) => {
-    if (priority === 'High') return 'Extreme';
-    if (priority === 'Medium') return 'Moderate';
+    if (priority === 'extreme') return 'extreme';
+    if (priority === 'Medium') return 'moderate';
     return priority;
   };
 
@@ -48,7 +49,7 @@ export const TaskCard = ({ task }: { task: Todo }) => {
       <div className="flex items-start justify-between mb-4">
         <h3 className="text-xl font-semibold text-gray-900">{task.title}</h3>
         <div className="flex items-center gap-2">
-          <span className={`px-3 py-1 rounded-md text-sm font-medium border ${getPriorityStyles(task.priority)}`}>
+          <span className={`px-3 py-1 rounded-md text-sm font-medium border capitalize ${getPriorityStyles(task.priority)}`}>
             {getPriorityLabel(task.priority)}
           </span>
           <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
