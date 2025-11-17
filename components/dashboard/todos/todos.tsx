@@ -18,7 +18,7 @@ import { TaskCardSkeletonGroup } from './task-card-skeleto'
 import { getTodos } from '@/lib/api' 
 import Cookies from "js-cookie";
 interface Todo {
-   id: number;
+   id: string;
   title: string;
   todo_date: string;
    priority: 'extreme' | 'moderate' | 'low';

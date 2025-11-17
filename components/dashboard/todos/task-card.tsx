@@ -1,9 +1,11 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
 import { Pencil, Trash2, GripVertical } from 'lucide-react';
+import EditTaskModal from './EditModal';
 
 // ✅ Fixed interface
 interface Todo {
-  id: number;
+  id: string;
   title: string;
   description: string;
   priority: 'extreme' | 'moderate' | 'low';
@@ -13,6 +15,7 @@ interface Todo {
 }
 
 export const TaskCard = ({ task }: { task: Todo }) => {
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const getPriorityStyles = (priority: string) => {
     switch (priority) {
       case 'extreme':
@@ -64,14 +67,15 @@ export const TaskCard = ({ task }: { task: Todo }) => {
           Due {formatDate(task.todo_date)} {/* ✅ use todo_date */}
         </span>
         <div className="flex items-center gap-2">
-          <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors group">
-            <Pencil className="w-4 h-4 text-gray-400 group-hover:text-blue-600" />
+          <button onClick={() => setIsOpenModal(true)} className="p-2 hover:bg-blue-50 rounded-lg transition-colors group cursor-pointer">
+            <Pencil className="w-4 h-4  text-gray-400 group-hover:text-blue-600" />
           </button>
           <button className="p-2 hover:bg-red-50 rounded-lg transition-colors group">
             <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-600" />
           </button>
         </div>
       </div>
+      <EditTaskModal isOpen={isOpenModal} onClose={() => setIsOpenModal(false)} todo={task}  as />
     </div>
   );
 };

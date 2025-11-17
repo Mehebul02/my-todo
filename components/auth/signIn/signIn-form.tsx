@@ -30,11 +30,12 @@ export default function SignIn() {
       Cookies.set("access_token", res.access, { expires: 7 });
       Cookies.set("refresh_token", res.refresh, { expires: 30 });
       Cookies.set("user", JSON.stringify(res.user), { expires: 7 });
+      toast.success("Login successful!");
       setIsLoading(false);
-      router.push("/dashboard");
+      router.push("/dashboard/todos");
     } catch (error: any) {
       console.error("Login failed:", error.message);
-      alert(error.message);
+      toast.error(error.message);
       setIsLoading(false);
     }
   };

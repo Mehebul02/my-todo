@@ -53,8 +53,8 @@ export default function ChangePassword() {
 
     try {
       await changePasswordApi({
-        currentPassword,
-        newPassword,
+        old_password:currentPassword,
+        new_password:newPassword,
       })
 
       toast.success("Password updated successfully!")

@@ -1,12 +1,15 @@
 export type Todo = {
-  _id: string;
+  id: string;
   title: string;
   description?: string;
-  completed: boolean;
+  // completed: boolean;
   order?: number; 
   date?: string;
   createdAt?: string;
   updatedAt?: string;
+  todo_date?: string;
+ priority: 'extreme' | 'moderate' | 'low';
+
 };
 
 export type User = {

@@ -76,7 +76,7 @@ export const getTodos = (
 export const createTodo = (access: string, body: { title: string; description?: string, priority: "extreme" | "moderate" | "low", todo_date: string }) =>
   api<Todo>("/todos/", { access, method: "POST", body });
 export const updateTodo = (access: string, id: string, body: Partial<Todo>) =>
-  api<Todo>(`/api/v1/todos/${id}`, { access, method: "PUT", body });
+  api<Todo>(`/todos/${id}/`, { access, method: "PATCH", body });
 export const deleteTodo = (access: string, id: string) =>
   api<{ success: boolean }>(`/api/v1/todos/${id}`, { access, method: "DELETE" });
 
