@@ -18,12 +18,13 @@ import { TaskCardSkeletonGroup } from './task-card-skeleto'
 import { getTodos } from '@/lib/api' 
 import Cookies from "js-cookie";
 interface Todo {
-   id: string;
+   id: number;
   title: string;
-  date: string;
-  priority: 'Low' | 'Medium' | 'High';
+  todo_date: string;
+   priority: 'extreme' | 'moderate' | 'low';
   description: string;
-  createdAt: Date;
+ created_at: string;
+   is_completed: boolean;
 }
 
 export default function TodosPage() {
@@ -98,7 +99,7 @@ export default function TodosPage() {
                 </CardHeader>
 
                 {/* Search and Filter Bar */}
-                <div className="flex gap-4 mb-8 items-center">
+                <div className="flex gap-4 mb-8 items-center z-50">
                     <div className="relative flex-1">
                         <Input
                             placeholder="Search your task here..."
@@ -113,13 +114,13 @@ export default function TodosPage() {
                         <DropdownMenuTrigger asChild>
                             <Button
                                 variant="outline"
-                                className="flex items-center gap-2 border-slate-200 text-slate-700 hover:bg-slate-50"
+                                className="flex items-center gap-2 cursor-pointer  border-slate-200 text-slate-700 hover:bg-slate-50"
                             >
                                 Filter By
                                 <ArrowUpDown className="w-4 h-4" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuContent align="end" className="w-48 bg-white cursor-pointer">
                             <div className="px-2 py-1.5 text-xs font-semibold text-slate-500 uppercase">
                                 Date
                             </div>

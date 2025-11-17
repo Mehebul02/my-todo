@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { profileImage } from "@/app/assets";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -6,7 +7,7 @@ import { LogOut, Menu } from "lucide-react";
 import Image from "next/image";
 import { items } from "./nav-item";
 import Link from "next/link";
-export function MobileSidebar({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+export function MobileSidebar({ open, onOpenChange, user }: { user: any; open: boolean; onOpenChange: (open: boolean) => void }) {
 
 
   return (
@@ -31,15 +32,15 @@ export function MobileSidebar({ open, onOpenChange }: { open: boolean; onOpenCha
             <SidebarContent className="flex-1 overflow-y-auto pb-0">
                  <div className="px-4 py-6 flex flex-col items-center gap-3 rounded-lg mb-6">
       <Image
-        src={profileImage}
+        src={user?.profile_image ||profileImage}
         alt="User avatar"
         className="w-16 h-16 rounded-full border-2 border-slate-600"
         width={64}
         height={64}
       />
       <div className="text-center">
-        <h3 className="text-white font-medium">anonymous</h3>
-        <p className="text-slate-400 text-sm">anonymous@email.com</p>
+        <h3 className="text-white font-medium">{user?.first_name} {user?.last_name}</h3>
+        <p className="text-slate-400 text-sm">{user?.email}</p>
       </div>
     </div>
              {/* <MenuSection /> */}

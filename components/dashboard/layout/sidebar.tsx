@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // components/app-sidebar.tsx
 "use client";
 import { useEffect, useState } from "react";
@@ -18,7 +19,8 @@ import { profileImage } from "@/app/assets";
 import { MobileSidebar } from "./MobileSidebar";
 import { items } from "./nav-item";
 import Link from "next/link";
-
+import Cookies from "js-cookie";
+import { getMe } from "@/lib/api";
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -36,10 +38,37 @@ function useIsMobile() {
 export function AppSidebar() {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+ const token = Cookies.get("access_token")
+
+  // Example in useEffect or handler
+useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      
+      if (!token) return;
+
+      const res = await getMe(token); // ✅ awaited
+      const user = res.user ?? res;
+      console.log(user, "Userrr====>");
+      setUser(user); // update state
+    } catch (err) {
+      console.error("Failed to fetch user:", err);
+    }
+  };
+
+  fetchUser();
+}, []);
+
+const handleLogout = () => {
+  Cookies.remove("access_token");
+  Cookies.remove("refresh_token");
+  window.location.href = "/auth/signin"; 
+};
 
   if (isMobile) {
     return (
-      <MobileSidebar open={open} onOpenChange={setOpen} />
+      <MobileSidebar open={open} onOpenChange={setOpen} user={user}/>
     );
   }
 
@@ -48,15 +77,15 @@ export function AppSidebar() {
       <SidebarContent>
         <div className="px-4 py-6 flex flex-col items-center gap-3 rounded-lg mb-6">
       <Image
-        src={profileImage}
+        src={user?.profile_image || profileImage}
         alt="User avatar"
         className="w-16 h-16 rounded-full border-2 border-slate-600"
         width={64}
         height={64}
       />
       <div className="text-center">
-        <h3 className="text-white font-medium">anonymous</h3>
-        <p className="text-slate-400 text-sm">anonymous@email.com</p>
+        <h3 className="text-white font-medium">{user?.first_name} {user?.last_name}</h3>
+        <p className="text-slate-400 text-sm">{user?.email}</p>
       </div>
     </div>
         {/* <MenuSection /> */}
@@ -79,10 +108,10 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
        <SidebarMenuButton asChild className="text-slate-300 hover:text-white hover:bg-slate-700">
-          <a href="/api/auth/logout">
+          <button onClick={handleLogout} className="cursor-pointer">
             <LogOut className="h-5 w-5" />
             <span>Logout</span>
-          </a>
+          </button>
         </SidebarMenuButton>
       </SidebarFooter>
     </ShadcnSidebar>

@@ -1,18 +1,16 @@
 import React from 'react';
 import { Pencil, Trash2, GripVertical } from 'lucide-react';
 
+// ✅ Fixed interface
 interface Todo {
-  id: string;
+  id: number;
   title: string;
-  date: string;
-  priority: 'Low' | 'Medium' | 'High';
   description: string;
-  createdAt: Date;
-  
+  priority: 'extreme' | 'moderate' | 'low';
+  todo_date: string; // ← key fix
+  created_at: string;
+  is_completed: boolean;
 }
-
-
-
 
 export const TaskCard = ({ task }: { task: Todo }) => {
   const getPriorityStyles = (priority: string) => {
@@ -28,14 +26,11 @@ export const TaskCard = ({ task }: { task: Todo }) => {
     }
   };
 
-  const getPriorityLabel = (priority: string) => {
-    if (priority === 'extreme') return 'extreme';
-    if (priority === 'Medium') return 'moderate';
-    return priority;
-  };
-
+  // ✅ No need for getPriorityLabel — API values match UI
   const formatDate = (dateString: string) => {
+    if (!dateString) return '—';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid date';
     return date.toLocaleDateString('en-US', { 
       month: 'short', 
       day: 'numeric', 
@@ -50,7 +45,7 @@ export const TaskCard = ({ task }: { task: Todo }) => {
         <h3 className="text-xl font-semibold text-gray-900">{task.title}</h3>
         <div className="flex items-center gap-2">
           <span className={`px-3 py-1 rounded-md text-sm font-medium border capitalize ${getPriorityStyles(task.priority)}`}>
-            {getPriorityLabel(task.priority)}
+            {task.priority} {/* ✅ direct use */}
           </span>
           <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
             <GripVertical className="w-5 h-5 text-gray-400" />
@@ -60,13 +55,13 @@ export const TaskCard = ({ task }: { task: Todo }) => {
 
       {/* Description */}
       <p className="text-gray-600 text-sm mb-6 leading-relaxed">
-        {task.description}
+        {task.description || 'No description'}
       </p>
 
       {/* Footer */}
       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
         <span className="text-sm text-gray-500 font-medium">
-          Due {formatDate(task.date)}
+          Due {formatDate(task.todo_date)} {/* ✅ use todo_date */}
         </span>
         <div className="flex items-center gap-2">
           <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors group">
