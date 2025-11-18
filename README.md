@@ -1,7 +1,7 @@
 # My Todo App — Front-End Screening Task
 
-Live: https://your-deployed-url.vercel.app  
-Repo: https://github.com/your-username/my-todo
+Live: https://my-todo-psi-bice.vercel.app/  
+Repo: https://github.com/Mehebul02/my-todo
 
 ## Tech
 - Next.js (App Router) + TypeScript
