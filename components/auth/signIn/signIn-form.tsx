@@ -109,7 +109,7 @@ export default function SignIn() {
                     Remember me
                   </label>
                 </div>
-                <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500">
+                <Link href="/auth/change-password" className="text-sm text-blue-600 hover:text-blue-500">
                   Forgot your password?
                 </Link>
               </div>

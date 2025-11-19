@@ -4,7 +4,7 @@ import { useState, useEffect, JSX } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {  Calendar, X } from 'lucide-react'
-import { updateTodo } from '@/lib/api' // ✅ import update API
+import { updateTodo } from '@/lib/api' 
 import Cookies from "js-cookie";
 import { toast } from 'sonner'
 export default function EditTaskModal({
@@ -66,7 +66,7 @@ export default function EditTaskModal({
 
       toast.success("Task updated successfully!")
       
-      // ✅ Trigger parent refresh (e.g., refetch todos)
+ 
       onUpdate?.()
       onClose()
 

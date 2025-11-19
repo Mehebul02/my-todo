@@ -11,7 +11,7 @@ interface Todo {
   title: string;
   description: string;
   priority: 'extreme' | 'moderate' | 'low';
-  todo_date: string; // ← key fix
+  todo_date: string; 
   created_at: string;
   is_completed: boolean;
 }
